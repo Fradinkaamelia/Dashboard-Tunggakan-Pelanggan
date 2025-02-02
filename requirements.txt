@@ -1,0 +1,9 @@
+streamlit==1.17.0
+pandas==1.5.3
+plotly==5.11.0
+scipy==1.9.3
+numpy==1.23.5
+streamlit-plotly-events==0.0.2
+st-aggrid==0.3.0
+matplotlib==3.6.2
+reportlab==3.6.1
