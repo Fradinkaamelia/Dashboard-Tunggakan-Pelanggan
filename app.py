@@ -499,6 +499,13 @@ def main():
                     df_raw = df_raw.dropna(how='all')
                     df_raw.columns = df_raw.columns.str.strip()
 
+                    # Mengubah semua kolom menjadi tipe string
+                    df_raw['Nama'] = df_raw['Nama'].astype(str).fillna('')
+                    df_raw['No HP'] = df_raw['No HP'].astype(str).fillna('')
+                    df_raw['Alamat'] = df_raw['Alamat'].astype(str).fillna('')
+                    df_raw['Customer Management'] = df_raw['Customer Management'].astype(str).fillna('')
+                    df_raw['Kelurahan'] = df_raw['Kelurahan'].astype(str).fillna('')
+
                     # Simpan data ke session_state agar dapat diakses di seluruh tab
                     st.session_state.df_processed = df_raw
                     st.session_state.df_raw = df_raw  # Pastikan df_raw juga disimpan di session_state
