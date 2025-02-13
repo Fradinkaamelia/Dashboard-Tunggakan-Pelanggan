@@ -1307,7 +1307,7 @@ def main():
                     'jumlah_bulan_tunggakan',
                     'jumlah_pelanggan',
                     'Total Tunggakan Display',
-                    'Persentase Perubahan Display'
+                    
                 ]]
 
                 # buat AgGrid
@@ -1316,7 +1316,7 @@ def main():
                 grid_options.configure_column('jumlah_bulan_tunggakan', headerName='Jumlah Bulan Tunggakan', editable=False)
                 grid_options.configure_column('jumlah_pelanggan', headerName='Jumlah Pelanggan', editable=False)
                 grid_options.configure_column('Total Tunggakan Display', headerName='Total Tunggakan', editable=False)
-                grid_options.configure_column('Persentase Perubahan Display', headerName='Persentase Perubahan', editable=False)
+                #grid_options.configure_column('Persentase Perubahan Display', headerName='Persentase Perubahan', editable=False)
                 grid_options.configure_selection('single')
 
                 grid_response = AgGrid(
