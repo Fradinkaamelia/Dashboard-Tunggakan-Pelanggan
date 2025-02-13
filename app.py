@@ -2570,53 +2570,46 @@ def main():
 
     with tab6:
         def generate_statistics(summary_df):
-            # Menghitung total pelanggan (unique)
-            total_pelanggan = summary_df['total_pelanggan'].sum()
-
-            # Menghitung bulan dengan tunggakan tertinggi
+            # Menghitung bulan dengan tunggakan tertinggi dan terendah
             max_tunggakan_row = summary_df.loc[summary_df['total_tunggakan'].idxmax()]
             max_tunggakan = f"{max_tunggakan_row['bulan_tahun']} (Rp {max_tunggakan_row['total_tunggakan']:,.0f})"
-
-            # Menghitung bulan dengan tunggakan terendah
+            
             min_tunggakan_row = summary_df.loc[summary_df['total_tunggakan'].idxmin()]
             min_tunggakan = f"{min_tunggakan_row['bulan_tahun']} (Rp {min_tunggakan_row['total_tunggakan']:,.0f})"
 
-            # Menghitung kenaikan tertinggi
-            summary_df['tunggakan_change'] = summary_df['total_tunggakan'].diff()  # Selisih tunggakan antar bulan
-            max_increase = summary_df.loc[summary_df['tunggakan_change'].idxmax()]
+            # Menghitung kenaikan tertinggi (selisih antara 2 bulan berturut-turut)
+            summary_df['tunggakan_change'] = summary_df['total_tunggakan'].diff()
+
+            # Mencari kenaikan tertinggi (bandingkan bulan sebelumnya dengan bulan berikutnya)
             max_increase_idx = summary_df['tunggakan_change'].idxmax()
-
-            # Cek apakah ada bulan berikutnya untuk kenaikan tertinggi
-            if max_increase_idx + 1 < len(summary_df):
-                highest_increase = f"{max_increase['bulan_tahun']} ke {summary_df.iloc[max_increase_idx + 1]['bulan_tahun']} (Rp {max_increase['tunggakan_change']:,})"
+            if summary_df.loc[max_increase_idx, 'tunggakan_change'] > 0:
+                max_increase = f"{summary_df.loc[max_increase_idx-1, 'bulan_tahun']} ke {summary_df.loc[max_increase_idx, 'bulan_tahun']} (Rp {summary_df.loc[max_increase_idx, 'tunggakan_change']:,})"
             else:
-                highest_increase = f"{max_increase['bulan_tahun']} ke {summary_df.iloc[max_increase_idx]['bulan_tahun']} (Rp {max_increase['tunggakan_change']:,})"
+                max_increase = "Tidak ada bulan dengan kenaikan tunggakan"
 
-            # Menghitung penurunan tertinggi
-            min_decrease = summary_df.loc[summary_df['tunggakan_change'].idxmin()]
+            # Mencari penurunan tertinggi (bandingkan bulan sebelumnya dengan bulan berikutnya)
             min_decrease_idx = summary_df['tunggakan_change'].idxmin()
-
-            # Cek apakah ada bulan berikutnya untuk penurunan tertinggi
-            if min_decrease_idx + 1 < len(summary_df):
-                highest_decrease = f"{min_decrease['bulan_tahun']} ke {summary_df.iloc[min_decrease_idx + 1]['bulan_tahun']} (Rp {min_decrease['tunggakan_change']:,})"
+            if summary_df.loc[min_decrease_idx, 'tunggakan_change'] < 0:
+                min_decrease = f"{summary_df.loc[min_decrease_idx-1, 'bulan_tahun']} ke {summary_df.loc[min_decrease_idx, 'bulan_tahun']} (Rp {summary_df.loc[min_decrease_idx, 'tunggakan_change']:,})"
             else:
-                highest_decrease = f"{min_decrease['bulan_tahun']} ke {summary_df.iloc[min_decrease_idx]['bulan_tahun']} (Rp {min_decrease['tunggakan_change']:,})"
+                min_decrease = "Tidak ada bulan dengan penurunan tunggakan"
 
-            # Menghitung rata-rata pelanggan dan tunggakan
+            # Menghitung rata-rata jumlah pelanggan dan total tunggakan
             avg_pelanggan = summary_df['total_pelanggan'].mean()
             avg_tunggakan = summary_df['total_tunggakan'].mean()
 
             statistics = {
-                "Total Pelanggan (unique)": total_pelanggan,
                 "Bulan dengan Tunggakan Tertinggi": max_tunggakan,
                 "Bulan dengan Tunggakan Terendah": min_tunggakan,
-                "Kenaikan Tertinggi": highest_increase,
-                "Penurunan Tertinggi": highest_decrease,
+                "Kenaikan Tertinggi": max_increase,
+                "Penurunan Tertinggi": min_decrease,
                 "Rata-rata Jumlah Pelanggan": f"{avg_pelanggan:,.0f}",
                 "Rata-rata Total Tunggakan": f"Rp {avg_tunggakan:,.0f}"
             }
 
             return statistics
+
+
 
         if not st.session_state.data_loaded:
             show_upload_message()  # Pesan jika data belum dimuat
@@ -2792,10 +2785,10 @@ def main():
                     st.plotly_chart(fig_overall, use_container_width=True)
 
                     # Menampilkan statistik
-                    st.markdown("### Statistik Kategori Pelanggan:")
-                    statistics = generate_statistics(overall_summary)
-                    for stat_name, stat_value in statistics.items():
-                        st.write(f"**{stat_name}:** {stat_value}")
+                    # st.markdown("### Statistik Kategori Pelanggan:")
+                    # statistics = generate_statistics(overall_summary)
+                    # for stat_name, stat_value in statistics.items():
+                    #     st.write(f"**{stat_name}:** {stat_value}")
 
 
                 for i, category in enumerate(unique_categories):
